@@ -307,7 +307,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1921866437}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: PlayGame
+        m_MethodName: RestartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3320,7 +3320,7 @@ MonoBehaviour:
   player: {fileID: 500171143}
   canBeatLevel: 0
   beatLevelScore: 5
-  timedLevel: 1
+  timedLevel: 0
   startTime: 5
   bgMusicAudio: {fileID: 0}
   isMusicOver: 0

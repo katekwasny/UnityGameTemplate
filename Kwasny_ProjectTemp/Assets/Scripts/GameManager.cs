@@ -325,7 +325,7 @@ public class GameManager : MonoBehaviour
                 }
                 if (isMusicOver || bgMusicAudio == null)
                 {
-                    if (nextLevel != null)
+                    if (nextLevel == null)
                     {
                         if (gameOverSFX)
                         {
@@ -333,7 +333,9 @@ public class GameManager : MonoBehaviour
                            gameObject.transform.position);
                         }
 
-                        StartNextLevel();
+                        gameMessageDisplay.text = winMessage;
+                        gameState = gameStates.GameOver;
+                        
                     }
                     else
                     {
@@ -342,8 +344,9 @@ public class GameManager : MonoBehaviour
                             AudioSource.PlayClipAtPoint(gameOverSFX,
                            gameObject.transform.position);
                         }
-                        gameMessageDisplay.text = winMessage;
-                        gameState = gameStates.GameOver;
+
+                        StartNextLevel();
+
                     }
 
                     
