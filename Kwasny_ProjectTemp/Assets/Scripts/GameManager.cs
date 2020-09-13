@@ -222,6 +222,7 @@ public class GameManager : MonoBehaviour
 
         SceneManager.LoadScene(LeveltoLoad, LoadSceneMode.Additive);
         currentLevel = LeveltoLoad;
+
     }
 
 
@@ -325,6 +326,9 @@ public class GameManager : MonoBehaviour
                 }
                 if (isMusicOver || bgMusicAudio == null)
                 {
+                    //Scene nextScene = SceneManager.GetSceneAt(SceneManager.GetActiveScene().buildIndex + 1);
+                    //nextLevel = nextScene.name;
+
                     if (nextLevel == null)
                     {
                         if (gameOverSFX)
@@ -389,6 +393,7 @@ public class GameManager : MonoBehaviour
 
         LeveltoLoad = nextLevel;
         PlayGame();
+        
     }// end StartNextLevel
 
     public void RestartGame()
