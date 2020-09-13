@@ -7,9 +7,9 @@ using TMPro;
 using System;
 
 /*
- * Author
- * Date Created
- * Date Modified:
+ * Author: Kate Kwasny
+ * Date Created: 9/11/2020
+ * Date Modified: 9/12/2020
  * Description: The Game Manager that manages basic game 
  * resources such as score, health, and outputs to UI 
  * elements in the game scene.
@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
     //hides all the Canvases
     public void HideMenu()
     {
-        //sets all menus to false
+        //sets all menus to false so as to not display them
         if (MenuCanvas)
             MenuCanvas.SetActive(false);
         if (HUDCanvas)
@@ -160,6 +160,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //loads the firs level
         LeveltoLoad = firstLevel;
         MainMenu();
         
@@ -169,17 +170,21 @@ public class GameManager : MonoBehaviour
     //displays and sets the MainMenu
     public void MainMenu()
     {
+        //hides menus
         HideMenu();
+        //sets the default values for the lives and scores
         playerLives = defaultLives;
         score = defaultScore;
 
+        //title displays for the main menu
         titleDisplay.text = gameTitle;
         creditsDisplay.text = gameCredits;
         copyrightDisplay.text = copyrightDate;
 
+        //turn on menu canvas
         if (MenuCanvas)
             MenuCanvas.SetActive(true);
-
+        //turn on footer canvas
         if (FooterCanvas)
             FooterCanvas.SetActive(true);
     }// end MainMenu
@@ -200,46 +205,50 @@ public class GameManager : MonoBehaviour
         if (HUDCanvas)
             HUDCanvas.SetActive(true);
 
+        //display and set time
         if(timedLevel)
         {
             currentTime = startTime;
             timerTitleDisplay.text = timerTitle;
             timerValueDisplay.text = startTime.ToString("0.00");
         }
+
+        //display and set score
         if(scoreValueDisplay)
         {
             scoreValueDisplay.text = score.ToString();
             scoreTitleDisplay.text = scoreTitle;
         }
+        //display and set lives
         if(livesValueDisplay)
         {
             livesValueDisplay.text = playerLives.ToString();
             livesTitleDisplay.text = livesTitle;
         }
+
+        //says the game is started
         gameStarted = true;
 
         playerIsDead = false;
         gameState = gameStates.Playing;
 
+        //loads the current scene additively 
         SceneManager.LoadScene(LeveltoLoad, LoadSceneMode.Additive);
         currentLevel = LeveltoLoad;
 
-        if(SceneManager.GetSceneByName(currentLevel).buildIndex >= SceneManager.sceneCountInBuildSettings -1)
-            nextLevel = null;
     }
-
 
     // Update is called once per frame
     void Update()
-    {
-        
+    {        
 
+        //key inputs
         if (Input.GetKey("escape"))
             QuitGame();
         if (Input.GetKey("g"))
             gameState = gameStates.GameOver;
         if (Input.GetKey("b"))
-            gameState = gameStates.BeatLevel;
+            gameState = gameStates.BeatLevel;       
         if (Input.GetKey("p"))
             gameState = gameStates.Playing;
         if (Input.GetKey("d"))
@@ -247,15 +256,18 @@ public class GameManager : MonoBehaviour
         if (Input.GetKey("r"))
             RestartGame();
 
+        //displays score
         if(scoreValueDisplay)
         {
             scoreValueDisplay.text = score.ToString();
         }
 
+        //displays lives
         if(livesValueDisplay)
         {
             livesValueDisplay.text = playerLives.ToString();
         }
+        //displays or doesn't display timer depending on timedLevel being true/false
         if(timedLevel)
         {
             timerValueDisplay.text = currentTime.ToString("0.00");
@@ -274,6 +286,7 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case gameStates.Playing:
+                //checks if player died, if so, descreases playerLives value
                 if(playerIsDead)
                 {
                     if(playerLives > 0)
@@ -302,6 +315,8 @@ public class GameManager : MonoBehaviour
                 break;
 
             case gameStates.Death:
+
+                //check if background music is playing
                 if(bgMusicAudio)
                 {
                     bgMusicAudio.volume -= 0.01f;
@@ -310,17 +325,22 @@ public class GameManager : MonoBehaviour
                 }
                 if (isMusicOver || bgMusicAudio == null)
                 {
+                    //sound effect playing if it exists
                     if (gameOverSFX)
                     {
                         AudioSource.PlayClipAtPoint(gameOverSFX,
                        gameObject.transform.position);
                     }
+
+                    //displays losing game over message
                     gameMessageDisplay.text = loseMessage;
                     gameState = gameStates.GameOver;
                 }
 
                 break;
             case gameStates.BeatLevel:
+
+                //check if background music is playing
                 if (bgMusicAudio)
                 {
                     bgMusicAudio.volume -= 0.01f;
@@ -332,26 +352,28 @@ public class GameManager : MonoBehaviour
                     //Scene nextScene = SceneManager.GetSceneAt(SceneManager.GetActiveScene().buildIndex + 1);
                     //nextLevel = nextScene.name;
 
+                    
+
                     if (nextLevel != null)
                     {
+                        //sound effect playing if it exists
                         if (gameOverSFX)
                         {
                             AudioSource.PlayClipAtPoint(gameOverSFX,
                            gameObject.transform.position);
                         }
-
-                        StartNextLevel();
-                        
+                        StartNextLevel();                        
                     }
                     else
                     {
+                        //sound effect playing if it exists
                         if (gameOverSFX)
                         {
                             AudioSource.PlayClipAtPoint(gameOverSFX,
                            gameObject.transform.position);
                         }
-
-                        
+                       
+                        //display win game over message
                         gameMessageDisplay.text = winMessage;
                         gameState = gameStates.GameOver;
 
@@ -362,11 +384,14 @@ public class GameManager : MonoBehaviour
                 break;
             
             case gameStates.GameOver:
+                //makes it so player is not able to do anything
                 if (player)
                     player.SetActive(false);
 
+                //hides menus
                 HideMenu();
 
+                //starts up end screen canvas
                 if (EndScreenCanvas)
                 {
                     EndScreenCanvas.SetActive(true);
@@ -392,13 +417,14 @@ public class GameManager : MonoBehaviour
         isMusicOver = false;
         playerLives = defaultLives;
         SceneManager.UnloadSceneAsync(currentLevel);
-
-
-        LeveltoLoad = nextLevel;        
+        //sets level to load as the next level
+        LeveltoLoad = nextLevel;
 
         PlayGame();
-
-
+        //if the current level is equal to the last level, next level is equal to null
+        //this logic doesn't work
+        if (currentLevel == nextLevel)
+            nextLevel = null;
 
     }// end StartNextLevel
 
