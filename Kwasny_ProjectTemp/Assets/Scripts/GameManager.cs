@@ -128,6 +128,7 @@ public class GameManager : MonoBehaviour
         timedLevel = false;
         startTime = 5.0f;
 
+        //titles 
         scoreTitle = "Score: ";
         livesTitle = "Lives: ";
         timerTitle = "Timer: ";
@@ -145,7 +146,7 @@ public class GameManager : MonoBehaviour
     //hides all the Canvases
     public void HideMenu()
     {
-
+        //sets all menus to false
         if (MenuCanvas)
             MenuCanvas.SetActive(false);
         if (HUDCanvas)
@@ -223,15 +224,17 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(LeveltoLoad, LoadSceneMode.Additive);
         currentLevel = LeveltoLoad;
 
+        if(SceneManager.GetSceneByName(currentLevel).buildIndex >= SceneManager.sceneCountInBuildSettings -1)
+            nextLevel = null;
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(gameState);
+        
 
-        if(Input.GetKey("escape"))
+        if (Input.GetKey("escape"))
             QuitGame();
         if (Input.GetKey("g"))
             gameState = gameStates.GameOver;
@@ -329,7 +332,7 @@ public class GameManager : MonoBehaviour
                     //Scene nextScene = SceneManager.GetSceneAt(SceneManager.GetActiveScene().buildIndex + 1);
                     //nextLevel = nextScene.name;
 
-                    if (nextLevel == null)
+                    if (nextLevel != null)
                     {
                         if (gameOverSFX)
                         {
@@ -337,8 +340,7 @@ public class GameManager : MonoBehaviour
                            gameObject.transform.position);
                         }
 
-                        gameMessageDisplay.text = winMessage;
-                        gameState = gameStates.GameOver;
+                        StartNextLevel();
                         
                     }
                     else
@@ -349,12 +351,12 @@ public class GameManager : MonoBehaviour
                            gameObject.transform.position);
                         }
 
-                        StartNextLevel();
+                        
+                        gameMessageDisplay.text = winMessage;
+                        gameState = gameStates.GameOver;
 
                     }
-
                     
-
                 } // end if
 
                 break;
@@ -391,9 +393,13 @@ public class GameManager : MonoBehaviour
         playerLives = defaultLives;
         SceneManager.UnloadSceneAsync(currentLevel);
 
-        LeveltoLoad = nextLevel;
+
+        LeveltoLoad = nextLevel;        
+
         PlayGame();
-        
+
+
+
     }// end StartNextLevel
 
     public void RestartGame()
